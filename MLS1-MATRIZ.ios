@@ -1,0 +1,127 @@
+enable
+configure terminal
+hostname SW-DIST-MATRIZ
+!------------------------------------------------------------------------------------------------------
+! 1. CONFIGURACION BASICA Y VLANS
+! Crear VLANs
+vlan 10
+ name TI
+exit
+vlan 20
+ name Operaciones
+exit
+vlan 30
+ name Administracion
+exit
+vlan 40
+ name RRHH
+exit
+vlan 50
+ name Gerencia
+exit
+vlan 60
+ name Finanzas
+exit
+vlan 99
+ name Data Center
+exit
+!------------------------------------------------------------------------------------------------------
+!2. CONFIGURAR SVIS (INTERFACES VLAN) - GATEWAYS
+! Habilitar routing entre VLANs
+ip routing
+! VLAN 10 - TI
+interface vlan 10
+ ip address 10.10.0.1 255.255.255.0
+ ip helper-address 10.10.2.50
+ no shutdown
+ exit
+
+! VLAN 20 - Operaciones
+interface vlan 20
+ ip address 10.10.1.1 255.255.255.128
+ ip helper-address 10.10.2.50
+ no shutdown
+ exit
+
+! VLAN 30 - Administración
+interface vlan 30
+ ip address 10.10.1.129 255.255.255.192
+ ip helper-address 10.10.2.50
+ no shutdown
+ exit
+
+! VLAN 40 - RRHH
+interface vlan 40
+ ip address 10.10.1.193 255.255.255.192
+ ip helper-address 10.10.2.50
+ no shutdown
+ exit
+
+! VLAN 50 - Gerencia
+interface vlan 50
+ ip address 10.10.2.1 255.255.255.224
+ ip helper-address 10.10.2.50
+ no shutdown
+ exit
+
+! VLAN 60 - Finanzas
+interface vlan 60
+ ip address 10.10.2.33 255.255.255.240
+ ip helper-address 10.10.2.50
+ no shutdown
+ exit
+
+! VLAN 99 - Data Center
+interface vlan 99
+ ip address 10.10.2.49 255.255.255.248
+ no shutdown
+ exit
+!------------------------------------------------------------------------------------------------------
+!3. CONFIGURAR PUERTOS TRUNK HACIA SWITHCES DE ACCESSO
+! Hacia SW-ACC-MATRIZ-1 (puerto Gig0/1)
+interface range gigabitEthernet 0/1-2
+ switchport mode trunk
+ switchport trunk native vlan 999
+ no shutdown
+ exit
+
+!------------------------------------------------------------------------------------------------------
+!4. CONFIGURAR PUERTO TRUNK HACIA ROUTER CORE - PUERTO ENRUTADO
+! Asumiendo puerto hacia router core
+interface fa0/1
+ no switchport
+ ip address 10.255.0.2 255.255.255.252
+ no shutdown
+ exit
+
+!------------------------------------------------------------------------------------------------------
+!5. CONFIGURAR OSPF - AREA 1
+router ospf 1
+ router-id 1.1.1.1
+! Interfaces pasivas (todas las VLANs)
+ passive-interface vlan 10
+ passive-interface vlan 20
+ passive-interface vlan 30
+ passive-interface vlan 40
+ passive-interface vlan 50
+ passive-interface vlan 60
+ passive-interface vlan 99
+
+! Alternativa más precisa (recomendada):
+ network 10.10.0.0 0.0.0.255 area 1
+ network 10.10.1.0 0.0.0.127 area 1     
+ network 10.10.1.128 0.0.0.63 area 1    
+ network 10.10.1.192 0.0.0.63 area 1    
+ network 10.10.2.0 0.0.0.31 area 1      
+ network 10.10.2.32 0.0.0.15 area 1     
+ network 10.10.2.48 0.0.0.7 area 1  
+ network 10.255.0.0 0.0.0.3 area 0    
+
+! Resumen de rutas hacia área 0 (desde ABR)
+ area 1 range 10.10.0.0 255.255.252.0
+
+! Redistribución de ruta por defecto si es necesario
+ default-information originate
+ exit
+
+ do wr

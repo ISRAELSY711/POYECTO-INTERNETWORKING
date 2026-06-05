@@ -1,0 +1,51 @@
+enable
+configure terminal
+hostname SW-ACC-SUC-1
+!-------------------------------------------------------------------------------------------------------
+! 1. CONFIGURACION BASICA Y VLANS
+! Crear VLANs
+vlan 110
+ name Ventas_y_Com
+exit
+vlan 120
+ name Soporte_Tec
+exit
+vlan 130
+ name Logistica
+exit
+vlan 140
+ name Admin_SC
+exit
+!------------------------------------------------------------------------------------------------------
+!2. PUERTOS TRUNK HACIA AMBOS SWITCHES CORE (REDUNDANCIA)
+! Hacia SW-CORE-SUC-1 / SW-CORE-SUC-2  (asumiendo Gig0/1-2)
+interface range gigabitEthernet 0/1-2
+ switchport mode trunk
+ switchport trunk native vlan 999
+ no shutdown
+ exit
+!------------------------------------------------------------------------------------------------------
+!2. PUERTOS DE ACCESO - VLAN 110 (VENTAS Y COMERCIAL)
+interface range fa0/4-5
+ switchport mode access
+ switchport access vlan 110
+ exit
+!------------------------------------------------------------------------------------------------------
+!3. PUERTOS DE ACCESO - VLAN 120 (SOPORTE TECNICO)
+interface range fa0/6-7
+ switchport mode access
+ switchport access vlan 120
+ exit
+!------------------------------------------------------------------------------------------------------
+!4. PUERTOS DE ACCESO - VLAN 130 (LOGISTICA)
+interface range fa0/8-9
+ switchport mode access
+ switchport access vlan 130
+ exit
+!------------------------------------------------------------------------------------------------------
+!5. PUERTOS DE ACCESO - VLAN 140 (ADMINISTRACION SC)
+interface range fa0/10-11
+ switchport mode access
+ switchport access vlan 140
+ exit
+do wr

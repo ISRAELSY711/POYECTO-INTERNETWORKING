@@ -1,0 +1,37 @@
+enable
+configure terminal
+hostname RTR-MATRIZ-CORE
+!-----------------------------------------------------------------------------------------------------------------
+! 1. CONFIGURAR INTERFACES 
+! Interface hacia CNT (ISP 1)
+interface gigabitEthernet 0/0/0
+ description LINK_A_CNT
+ ip address 200.1.2.2 255.255.255.252
+ no shutdown
+ exit
+
+! Interface hacia Telconet (ISP 2)
+interface gigabitEthernet 0/0/1
+ description LINK_B_TELCONET
+ ip address 200.2.2.2 255.255.255.252
+ no shutdown
+ exit
+
+! Interface hacia switch distribución
+interface gigabitEthernet 0/0/2
+ description LINK_TO_SW_DIST
+ ip address 10.255.0.1 255.255.255.252
+ no shutdown
+ exit
+!-----------------------------------------------------------------------------------------------------------------
+!2. CONFIGURAR OSPF AREA 0
+router ospf 1
+ router-id 0.0.0.0
+! Redes a anunciar
+ network 10.255.0.0 0.0.0.3 area 0 
+ 
+! Rutas por defecto inyectadas desde BGP
+ default-information originate always
+ 
+ exit
+do wr

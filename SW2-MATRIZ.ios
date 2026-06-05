@@ -1,0 +1,85 @@
+enable
+configure terminal
+hostname SW-ACC-MATRIZ-2
+!------------------------------------------------------------------------------------------------------
+! 1. CONFIGURACION BASICA Y VLANS
+! Crear VLANs
+vlan 10
+ name TI
+exit
+vlan 20
+ name Operaciones
+exit
+vlan 30
+ name Administracion
+exit
+vlan 40
+ name RRHH
+exit
+vlan 50
+ name Gerencia
+exit
+vlan 60
+ name Finanzas
+exit
+vlan 99
+ name Data Center
+exit
+
+!------------------------------------------------------------------------------------------------------
+! 2. PUERTO TRUNK HACIA SW-DIST-MATRIZ 
+interface gigabitEthernet 0/1
+ switchport mode trunk
+ switchport trunk native vlan 999
+ no shutdown
+ exit
+!------------------------------------------------------------------------------------------------------
+! 3.PUERTOS DE ACCESO - VLAN 10 (TI)
+interface range fa0/2-3
+ switchport mode access
+ switchport access vlan 10
+ no shutdown
+ exit
+!------------------------------------------------------------------------------------------------------
+! 4.PUERTOS DE ACCESO - VLAN 20 (OPERACIONES)
+interface range fa0/4-5
+ switchport mode access
+ switchport access vlan 20
+ no shutdown
+ exit
+!------------------------------------------------------------------------------------------------------
+! 5.PUERTOS DE ACCESO - VLAN 30 (ADMINISTRACION)
+interface range fa0/6-7
+ switchport mode access
+ switchport access vlan 30
+ no shutdown
+ exit
+!------------------------------------------------------------------------------------------------------
+! 6.PUERTOS DE ACCESO - VLAN 40 (RECURSOS HUMANOS)
+interface range fa0/8-9
+ switchport mode access
+ switchport access vlan 40
+ no shutdown
+ exit
+!------------------------------------------------------------------------------------------------------
+! 7.PUERTOS DE ACCESO - VLAN 50 (GERENCIA)
+interface range fa0/10-11
+ switchport mode access
+ switchport access vlan 50
+ no shutdown
+ exit
+!------------------------------------------------------------------------------------------------------
+! 8.PUERTOS DE ACCESO - VLAN 60 (FINANZAS)
+interface range fa0/12-13
+ switchport mode access
+ switchport access vlan 60
+ no shutdown
+ exit
+ !------------------------------------------------------------------------------------------------------
+! 9.PUERTOS DE ACCESO - VLAN 99 (DATA CENTER)
+interface range fa0/14-15
+ switchport mode access
+ switchport access vlan 99
+ no shutdown
+ exit
+do wr
