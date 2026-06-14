@@ -1,85 +1,94 @@
 enable
 configure terminal
-hostname SW-ACC-MATRIZ-2
-!------------------------------------------------------------------------------------------------------
-! 1. CONFIGURACION BASICA Y VLANS
-! Crear VLANs
+hostname SW2-MATRIZ-ACC
+
+! --- CREACIÓN DE VLANS CORPORATIVAS ---
 vlan 10
  name TI
-exit
 vlan 20
  name Operaciones
-exit
 vlan 30
  name Administracion
-exit
 vlan 40
  name RRHH
-exit
 vlan 50
  name Gerencia
-exit
 vlan 60
  name Finanzas
-exit
 vlan 99
- name Data Center
+ name Data_Center
+vlan 999
+ name Native_Trunk
 exit
 
-!------------------------------------------------------------------------------------------------------
-! 2. PUERTO TRUNK HACIA SW-DIST-MATRIZ 
-interface gigabitEthernet 0/1
+! --- CONFIGURACIÓN DE PUERTOS TRUNK (Hacia ambos MLS) ---
+interface range ethernet 0/0 - 1
+ switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk native vlan 999
  no shutdown
- exit
-!------------------------------------------------------------------------------------------------------
-! 3.PUERTOS DE ACCESO - VLAN 10 (TI)
-interface range fa0/2-3
+exit
+
+! --- ASIGNACIÓN DE VLANS POR BLOQUES ---
+
+! Bloque e1/0 - e1/3 para VLAN 10 (TI) - Node5 en e1/0
+interface range ethernet 1/0 - 3
  switchport mode access
  switchport access vlan 10
+ spanning-tree portfast
  no shutdown
- exit
-!------------------------------------------------------------------------------------------------------
-! 4.PUERTOS DE ACCESO - VLAN 20 (OPERACIONES)
-interface range fa0/4-5
+exit
+
+! Bloque e2/0 - e2/3 para VLAN 20 (Operaciones) - Node6 en e2/0
+interface range ethernet 2/0 - 3
  switchport mode access
  switchport access vlan 20
+ spanning-tree portfast
  no shutdown
- exit
-!------------------------------------------------------------------------------------------------------
-! 5.PUERTOS DE ACCESO - VLAN 30 (ADMINISTRACION)
-interface range fa0/6-7
+exit
+
+! Bloque e3/0 - e3/3 para VLAN 30 (Administración) - VPC7 en e3/0
+interface range ethernet 3/0 - 3
  switchport mode access
  switchport access vlan 30
+ spanning-tree portfast
  no shutdown
- exit
-!------------------------------------------------------------------------------------------------------
-! 6.PUERTOS DE ACCESO - VLAN 40 (RECURSOS HUMANOS)
-interface range fa0/8-9
+exit
+
+! Bloque e4/0 - e4/3 para VLAN 40 (RRHH)
+interface range ethernet 4/0 - 3
  switchport mode access
  switchport access vlan 40
+ spanning-tree portfast
  no shutdown
- exit
-!------------------------------------------------------------------------------------------------------
-! 7.PUERTOS DE ACCESO - VLAN 50 (GERENCIA)
-interface range fa0/10-11
+exit
+
+! Bloque e5/0 - e5/3 para VLAN 50 (Gerencia) - VPC10 en e4/0
+interface range ethernet 5/0 - 3
  switchport mode access
  switchport access vlan 50
+ spanning-tree portfast
  no shutdown
- exit
-!------------------------------------------------------------------------------------------------------
-! 8.PUERTOS DE ACCESO - VLAN 60 (FINANZAS)
-interface range fa0/12-13
+exit
+
+! Bloque e6/0 - e6/3 para VLAN 60 (Finanzas) - VPC9 en e5/0
+interface range ethernet 6/0 - 3
  switchport mode access
  switchport access vlan 60
+ spanning-tree portfast
  no shutdown
- exit
- !------------------------------------------------------------------------------------------------------
-! 9.PUERTOS DE ACCESO - VLAN 99 (DATA CENTER)
-interface range fa0/14-15
+exit
+
+! Bloque e7/0 - e7/3 para VLAN 99 (Data Center) - VPC8 en e6/0
+interface range ethernet 7/0 - 3
  switchport mode access
  switchport access vlan 99
+ spanning-tree portfast
  no shutdown
- exit
-do wr
+exit
+
+! --- CONFIGURACIÓN ADICIONAL DE STP ---
+spanning-tree mode rapid-pvst
+spanning-tree vlan 10,20,30,40,50,60,99 root secondary
+
+do write

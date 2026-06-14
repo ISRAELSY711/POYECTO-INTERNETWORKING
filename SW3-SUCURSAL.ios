@@ -1,51 +1,64 @@
 enable
 configure terminal
 hostname SW-ACC-SUC-1
-!-------------------------------------------------------------------------------------------------------
-! 1. CONFIGURACION BASICA Y VLANS
-! Crear VLANs
+
+! --- 1. CREACIÓN DE VLANS CORPORATIVAS ---
 vlan 110
  name Ventas_y_Com
-exit
 vlan 120
  name Soporte_Tec
-exit
 vlan 130
  name Logistica
-exit
 vlan 140
  name Admin_SC
+vlan 999
+ name Native_Trunk
 exit
-!------------------------------------------------------------------------------------------------------
-!2. PUERTOS TRUNK HACIA AMBOS SWITCHES CORE (REDUNDANCIA)
-! Hacia SW-CORE-SUC-1 / SW-CORE-SUC-2  (asumiendo Gig0/1-2)
-interface range gigabitEthernet 0/1-2
+
+! --- 2. CONFIGURACIÓN DE PUERTOS TRUNK (Hacia ambos MLS CORE) ---
+interface range ethernet 0/0 - 1
+ description TRUNKS_HACIA_SW-CORE-SUC
+ switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk native vlan 999
  no shutdown
- exit
-!------------------------------------------------------------------------------------------------------
-!2. PUERTOS DE ACCESO - VLAN 110 (VENTAS Y COMERCIAL)
-interface range fa0/4-5
+exit
+
+! --- 3. ASIGNACIÓN DE VLANS POR BLOQUES DE 4 INTERFACES ---
+
+! Bloque e1/0 - e1/3 para VLAN 110 (Ventas y Comercial)
+interface range ethernet 1/0 - 3
  switchport mode access
  switchport access vlan 110
- exit
-!------------------------------------------------------------------------------------------------------
-!3. PUERTOS DE ACCESO - VLAN 120 (SOPORTE TECNICO)
-interface range fa0/6-7
+ spanning-tree portfast
+ no shutdown
+exit
+
+! Bloque e2/0 - e2/3 para VLAN 120 (Soporte Técnico)
+interface range ethernet 2/0 - 3
  switchport mode access
  switchport access vlan 120
- exit
-!------------------------------------------------------------------------------------------------------
-!4. PUERTOS DE ACCESO - VLAN 130 (LOGISTICA)
-interface range fa0/8-9
+ spanning-tree portfast
+ no shutdown
+exit
+
+! Bloque e3/0 - e3/3 para VLAN 130 (Logística)
+interface range ethernet 3/0 - 3
  switchport mode access
  switchport access vlan 130
- exit
-!------------------------------------------------------------------------------------------------------
-!5. PUERTOS DE ACCESO - VLAN 140 (ADMINISTRACION SC)
-interface range fa0/10-11
+ spanning-tree portfast
+ no shutdown
+exit
+
+! Bloque e4/0 - e4/3 para VLAN 140 (Administración SC)
+interface range ethernet 4/0 - 3
  switchport mode access
  switchport access vlan 140
- exit
-do wr
+ spanning-tree portfast
+ no shutdown
+exit
+
+! --- 4. SPANNING TREE ---
+spanning-tree mode rapid-pvst
+
+do write
