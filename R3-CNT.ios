@@ -1,0 +1,50 @@
+enable
+configure terminal
+hostname R3-CNT
+
+interface Loopback0
+ ip address 2.2.2.3 255.255.255.255
+ no shutdown
+ exit
+
+! Conexión hacia MLS1-SUCURSAL (e0/1 de MLS1)
+interface Ethernet0/0
+ description HACIA MLS1-SUCURSAL
+ ip address 200.1.3.1 255.255.255.252
+ no shutdown
+ exit
+
+! Conexión hacia MLS2-SUCURSAL (e0/1 de MLS2)
+interface Ethernet0/1
+ description HACIA MLS2-SUCURSAL
+ ip address 200.1.3.5 255.255.255.252
+ no shutdown
+ exit
+
+! Viene de R2-CNT (e0/1 de R2)
+interface Ethernet0/2
+ description HACIA R2-CNT
+ ip address 200.1.1.6 255.255.255.252
+ no shutdown
+ exit
+
+router ospf 1
+ network 200.1.1.4 0.0.0.3 area 0
+ network 200.1.3.0 0.0.0.3 area 0
+ network 200.1.3.4 0.0.0.3 area 0
+ network 2.2.2.3 0.0.0.0 area 0
+ exit
+
+router bgp 200
+ bgp log-neighbor-changes
+ neighbor 200.1.3.2 remote-as 400
+ neighbor 200.1.3.6 remote-as 400
+ neighbor 2.2.2.1 remote-as 200
+ neighbor 2.2.2.1 update-source Loopback0
+ neighbor 2.2.2.1 next-hop-self
+ neighbor 2.2.2.2 remote-as 200
+ neighbor 2.2.2.2 update-source Loopback0
+ neighbor 2.2.2.2 next-hop-self
+ exit
+end
+write memory

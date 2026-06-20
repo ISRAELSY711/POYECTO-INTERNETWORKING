@@ -1,0 +1,117 @@
+enable
+configure terminal
+hostname MLS2-MATRIZ-DTB
+
+! --- 1. SPANNING TREE - ROOT PRIMARY ---
+ip routing
+spanning-tree mode rapid-pvst
+no ip igmp snooping
+
+! --- 2. ACTIVAR CAPACIDAD DE CAPA 3 Y CREAR VLANS ---
+vlan 110
+ name Ventas_y_Com
+exit
+vlan 120
+ name Soporte_Tec
+exit
+vlan 130
+ name Logistica
+exit
+vlan 140
+ name Admin_SC
+vlan 999
+ name Native_Trunk
+exit
+
+! --- 3. CONFIGURACIÓN DE ENLACES TRONCALES HACIA ACCESO ---
+interface range ethernet0/0, ethernet0/2
+ description TRUNKS_HACIA_SWITCHES_ACCESO
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 999
+ no shutdown
+exit
+! --- 4. CONFIGURACIÓN DE ENLACES A LOS ISPS ---
+interface Ethernet0/3
+ description WAN-TELCONET-BACKUP
+ no switchport
+ ip address 200.2.3.6 255.255.255.252
+ no shutdown
+ exit
+
+interface Ethernet0/1
+ description WAN-CNT
+ no switchport
+ ip address 200.1.3.6 255.255.255.252
+ no shutdown
+ exit
+
+! --- 5. SVIs CON HSRP STANDBY (PRIORIDAD BAJA) ---
+interface Vlan110
+ ip address 172.16.0.3 255.255.255.192
+ standby version 2
+ standby 110 ip 172.16.0.1
+ standby 110 priority 100
+ standby 110 preempt
+ standby use-bia
+ no shutdown
+ exit
+
+interface Vlan120
+ ip address 172.16.0.67 255.255.255.224
+ standby version 2
+ standby 120 ip 172.16.0.65
+ standby 120 priority 100
+ standby 120 preempt
+ standby use-bia
+ no shutdown
+ exit
+
+interface Vlan130
+ ip address 172.16.0.99 255.255.255.240
+ standby version 2
+ standby 130 ip 172.16.0.97
+ standby 130 priority 100
+ standby 130 preempt
+ standby use-bia
+ no shutdown
+ exit
+
+interface Vlan140
+ ip address 172.16.0.115 255.255.255.248
+ standby version 2
+ standby 140 ip 172.16.0.113
+ standby 140 priority 100
+ standby 140 preempt
+ standby use-bia
+ no shutdown
+ exit
+
+! --- 6. Enrutamiento EIGRP 500 y Enrutamiento BGP 400
+router eigrp 500
+ network 172.16.0.0 0.0.0.63
+ network 172.16.0.64 0.0.0.31
+ network 172.16.0.96 0.0.0.15
+ network 172.16.0.112 0.0.0.7
+ redistribute bgp 400 metric 100000 10 255 1 1500
+ exit
+
+router bgp 400
+ bgp log-neighbor-changes
+ neighbor 200.1.3.5 remote-as 200
+ neighbor 200.1.3.5 route-map PREFERIR-CNT in
+ neighbor 200.2.3.5 remote-as 300
+ neighbor 200.2.3.5 route-map CASTIGAR-TELCONET out
+ redistribute eigrp 500
+ exit
+
+! --- 7. Políticas BGP Activo/Respaldo
+route-map PREFERIR-CNT permit 10
+ set local-preference 200
+ exit
+
+route-map CASTIGAR-TELCONET permit 10
+ set as-path prepend 400 400 400
+ exit
+end
+write memory

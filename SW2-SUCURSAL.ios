@@ -1,0 +1,66 @@
+enable
+configure terminal
+hostname SW2-SUC-ACC
+
+! --- 1. SPANNING TREE - ROOT PRIMARY ---
+spanning-tree mode rapid-pvst
+no ip igmp snooping
+
+! --- 2. CREACIÓN DE VLANS CORPORATIVAS ---
+vlan 110
+ name Ventas_y_Com
+vlan 120
+ name Soporte_Tec
+vlan 130
+ name Logistica
+vlan 140
+ name Admin_SC
+vlan 999
+ name Native_Trunk
+exit
+
+! --- 3. CONFIGURACIÓN DE PUERTOS TRUNK (Hacia ambos MLS CORE) ---
+interface range ethernet0/0 - 1
+ description TRUNKS_HACIA_SW-CORE-SUC
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 999
+ no shutdown
+exit
+
+! --- 4. ASIGNACIÓN DE VLANS POR BLOQUES DE 4 INTERFACES ---
+
+! Bloque e1/0 - e1/3 para VLAN 110 (Ventas y Comercial)
+interface range ethernet 1/0 - 3
+ switchport mode access
+ switchport access vlan 110
+ spanning-tree portfast
+ no shutdown
+exit
+
+! Bloque e2/0 - e2/3 para VLAN 120 (Soporte Técnico)
+interface range ethernet 2/0 - 3
+ switchport mode access
+ switchport access vlan 120
+ spanning-tree portfast
+ no shutdown
+exit
+
+! Bloque e3/0 - e3/3 para VLAN 130 (Logística)
+interface range ethernet 3/0 - 3
+ switchport mode access
+ switchport access vlan 130
+ spanning-tree portfast
+ no shutdown
+exit
+
+! Bloque e4/0 - e4/3 para VLAN 140 (Administración SC)
+interface range ethernet 4/0 - 3
+ switchport mode access
+ switchport access vlan 140
+ spanning-tree portfast
+ no shutdown
+exit
+
+end
+write memory

@@ -2,8 +2,12 @@ enable
 configure terminal
 hostname MLS2-MATRIZ-DTB
 
-! --- 1. ACTIVAR CAPACIDAD DE CAPA 3 Y CREAR VLANS ---
+! --- 1. SPANNING TREE - ROOT PRIMARY ---
 ip routing
+spanning-tree mode rapid-pvst
+no ip igmp snooping
+
+! --- 2. ACTIVAR CAPACIDAD DE CAPA 3 Y CREAR VLANS ---
 vlan 10
  name TI
 vlan 20
@@ -22,98 +26,101 @@ vlan 999
  name Native_Trunk
 exit
 
-! --- 2. CONFIGURACIÓN DE ENLACES TRONCALES HACIA ACCESO ---
-interface range ethernet 0/0 - 1
- description TRUNKS_HACIA_SWITCHES_ACCESO
+! --- 3. CONFIGURACIÓN PUERTO HACIA S2 ---
+interface Ethernet0/0
+ description TRUNK_A_SW2-MATRIZ-ACC
  switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk native vlan 999
  no shutdown
 exit
 
-! --- 3. CONFIGURACIÓN PUERTO ENRUTADO HACIA R1 ---
-interface ethernet 0/3
- description LINK_HACIA_R1-MATRIZ
+! Enlace L3 hacia R1-MATRIZ
+interface Ethernet0/1
+ description L3_A_R1-MATRIZ
  no switchport
- ip address 10.255.0.6 255.255.255.252
+ ip address 10.255.255.5 255.255.255.252
  no shutdown
 exit
 
 ! --- 4. SVIs CON HSRP STANDBY (PRIORIDAD BAJA) ---
-interface vlan 10
+interface vlan10
  ip address 10.10.0.3 255.255.255.0
  ip helper-address 10.10.2.50
  standby version 2
  standby 10 ip 10.10.0.1
  standby 10 priority 100
  standby 10 preempt
+ standby use-bia
  no shutdown
 exit
 
-interface vlan 20
+interface vlan20
  ip address 10.10.1.3 255.255.255.128
  ip helper-address 10.10.2.50
  standby version 2
  standby 20 ip 10.10.1.1
  standby 20 priority 100
  standby 20 preempt
+ standby use-bia
  no shutdown
 exit
 
-interface vlan 30
+interface vlan30
  ip address 10.10.1.131 255.255.255.192
  ip helper-address 10.10.2.50
  standby version 2
  standby 30 ip 10.10.1.129
  standby 30 priority 100
  standby 30 preempt
+ standby use-bia
  no shutdown
 exit
 
-interface vlan 40
+interface vlan40
  ip address 10.10.1.195 255.255.255.192
  ip helper-address 10.10.2.50
  standby version 2
  standby 40 ip 10.10.1.193
  standby 40 priority 100
  standby 40 preempt
+ standby use-bia
  no shutdown
 exit
 
-interface vlan 50
+interface vlan50
  ip address 10.10.2.3 255.255.255.224
  ip helper-address 10.10.2.50
  standby version 2
  standby 50 ip 10.10.2.1
  standby 50 priority 100
  standby 50 preempt
+ standby use-bia
  no shutdown
 exit
 
-interface vlan 60
+interface vlan60
  ip address 10.10.2.35 255.255.255.240
  ip helper-address 10.10.2.50
  standby version 2
  standby 60 ip 10.10.2.33
  standby 60 priority 100
  standby 60 preempt
+ standby use-bia
  no shutdown
 exit
 
-interface vlan 99
+interface vlan99
  ip address 10.10.2.51 255.255.255.248
  standby version 2
  standby 99 ip 10.10.2.49
  standby 99 priority 100
  standby 99 preempt
+ standby use-bia
  no shutdown
 exit
 
-! --- 5. SPANNING TREE - ROOT SECONDARY ---
-spanning-tree mode rapid-pvst
-spanning-tree vlan 10,20,30,40,50,60,99 root secondary
-
-! --- 6. OSPF MULTIÁREA ---
+! --- 5. OSPF MULTIÁREA ---
 router ospf 1
  router-id 2.2.2.2
  passive-interface vlan 10
@@ -129,9 +136,10 @@ router ospf 1
  network 10.10.1.192 0.0.0.63 area 1
  network 10.10.2.0 0.0.0.31 area 1
  network 10.10.2.32 0.0.0.15 area 1
- network 10.10.2.48 0.0.0.7 area 1
+ network 10.10.2.48 0.0.0.7 area 0
  network 10.255.0.4 0.0.0.3 area 0
  area 1 range 10.10.0.0 255.255.252.0
 exit
 
-do write
+end
+write memory

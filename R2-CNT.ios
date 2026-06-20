@@ -1,0 +1,38 @@
+enable
+configure terminal
+hostname R2-CNT
+
+interface Loopback0
+ ip address 2.2.2.2 255.255.255.255
+ no shutdown
+ exit
+
+! Viene de R1-CNT (e0/1 de R1)
+interface Ethernet0/0
+ description HACIA R1-CNT
+ ip address 200.1.1.2 255.255.255.252
+ no shutdown
+ exit
+
+! Conexión a R3-CNT (e0/2 de R3)
+interface Ethernet0/1
+ description HACIA R3-CNT
+ ip address 200.1.1.5 255.255.255.252
+ no shutdown
+ exit
+
+router ospf 1
+ network 200.1.1.0 0.0.0.3 area 0
+ network 200.1.1.4 0.0.0.3 area 0
+ network 2.2.2.2 0.0.0.0 area 0
+ exit
+
+router bgp 200
+ bgp log-neighbor-changes
+ neighbor 2.2.2.1 remote-as 200
+ neighbor 2.2.2.1 update-source Loopback0
+ neighbor 2.2.2.3 remote-as 200
+ neighbor 2.2.2.3 update-source Loopback0
+ exit
+end
+write memory
