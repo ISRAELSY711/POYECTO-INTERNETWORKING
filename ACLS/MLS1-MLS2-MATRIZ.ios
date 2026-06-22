@@ -1,0 +1,22 @@
+! Restringir acceso de Recursos Humanos al Data Center
+enable
+configure terminal
+
+! 1. Creamos la ACL Extendida nombrada
+ip access-list extended BLOQUEO_RRHH_A_DC
+ remark Bloquear trafico de IP Origen (RRHH) a IP Destino (VLAN 99)
+
+ ! 2. Regla especifica (Denegar)
+ deny ip 10.10.1.192 0.0.0.63 10.10.2.48 0.0.0.7
+
+ ! 3. Regla global para anular el "Implicit Deny" y no dejar sin red a RRHH
+ permit ip any any
+exit
+
+! 4. Aplicación lo más cerca del ORIGEN (SVI 40) en dirección IN
+interface vlan 40
+ ip access-group BLOQUEO_RRHH_A_DC in
+exit
+
+end
+write memory

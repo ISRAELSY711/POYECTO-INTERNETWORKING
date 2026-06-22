@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetServe Solutions S.A. | Infraestructura Digital de Vanguardia</title>
+    <style>
+        /* Paleta de Colores de Alta Gama (Luz, Sofisticación y Conectividad) */
+        :root {
+            --bg-canvas: #f6f9fc;       /* Fondo ultra-limpio */
+            --white: #ffffff;
+            --primary-slate: #0a2540;   /* Texto corporativo profundo */
+            --accent-blue: #635bff;     /* Azul eléctrico vanguardista */
+            --accent-teal: #00d4b6;     /* Turquesa de innovación */
+            --text-muted: #4f5b66;      /* Gris sofisticado para detalles */
+            --gradient-light: linear-gradient(135deg, #635bff 0%, #00d4b6 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--primary-slate);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Barra de Navegación Minimalista */
+        header {
+            background: rgba(246, 249, 252, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 20px 8%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-logo span {
+            color: var(--accent-blue);
+        }
+
+        .brand-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--gradient-light);
+            border-radius: 50%;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 35px;
+        }
+
+        nav ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-slate);
+        }
+
+        /* BLOQUE HERO ASIMÉTRICO CON LOS INTEGRANTES PRIMERO */
+        .hero-section {
+            padding: 80px 8% 100px 8%;
+            background: var(--white);
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .hero-left h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+        }
+
+        .hero-left h1 span {
+            background: var(--gradient-light);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-left p {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            max-width: 540px;
+        }
+
+        /* Panel de Co-Creadores en el Hero */
+        .hero-right-team {
+            background: var(--bg-canvas);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .hero-right-team h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-blue);
+            margin-bottom: 25px;
+        }
+
+        .team-list-innovative {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .team-row-item {
+            background: var(--white);
+            padding: 15px 25px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);
+            border-left: 4px solid var(--accent-blue);
+            transition: transform 0.3s;
+        }
+        
+        .team-row-item:nth-child(even) {
+            border-left-color: var(--accent-teal);
+        }
+
+        .team-row-item:hover {
+            transform: translateX(5px);
+        }
+
+        .team-row-item .name {
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .team-row-item .role {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: var(--bg-canvas);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        /* DISEÑO DE FLUJO INTERCALADO (IZQUIERDA / DERECHA) SIN TARJETAS CONVENCIONALES */
+        .split-flow-section {
+            padding: 120px 8%;
+        }
+
+        .split-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            margin-bottom: 120px;
+        }
+
+        .split-row:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Inversión de orden para lograr el efecto zig-zag (Izquierda / Derecha) */
+        .split-row.reverse .split-media-box {
+            order: -1;
+        }
+
+        .split-content-box {
+            padding: 20px 0;
+        }
+
+        .split-content-box .tagline {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-blue);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .split-content-box h2 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .split-content-box p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+        }
+
+        /* Estructuras visuales interactivas alternativas a las tarjetas */
+        .split-media-box {
+            background: var(--white);
+            border-radius: 32px;
+            padding: 50px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            position: relative;
+        }
+
+        .deco-list {
+            list-style: none;
+        }
+
+        .deco-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.95rem;
+        }
+
+        .deco-list li:last-child {
+            border-bottom: none;
+        }
+
+        .deco-list-bullet {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-teal);
+            border-radius: 50%;
+        }
+
+        /* Panel de Nodos de Infraestructura (Sedes) */
+        .node-display {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .node-strip {
+            background: var(--bg-canvas);
+            padding: 25px;
+            border-radius: 16px;
+        }
+
+        .node-strip h4 {
+            font-size: 1.15rem;
+            margin-bottom: 5px;
+            color: var(--primary-slate);
+        }
+
+        .node-strip p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Footer Limpio */
+        footer {
+            background: var(--white);
+            padding: 40px 8%;
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        @media (max-width: 992px) {
+            .hero-section, .split-row {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .split-row.reverse .split-media-box {
+                order: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra Superior -->
+    <header>
+        <div class="brand-logo">
+            <div class="brand-dot"></div>
+            NetServe<span>Solutions</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#identidad">Identidad</a></li>
+                <li><a href="#soluciones">Portafolio</a></li>
+                <li><a href="#nodos">Sedes</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION: INTEGRANTES EN LA ENTRADA PRINCIPAL -->
+    <section class="hero-section" id="inicio">
+        <div class="hero-left">
+            <div style="font-family: monospace; color: var(--accent-blue); font-weight: bold; margin-bottom: 10px;">// PROYECTO INTERNETWORKING</div>
+            <h1>Ecosistemas de Redes de <span>Clase Mundial</span></h1>
+            <p>NetServe Solutions S.A. es una compañía ecuatoriana especializada en consultoría de telecomunicaciones, diseño lógico de infraestructuras y alta disponibilidad TI.</p>
+        </div>
+        
+        <!-- Nuestros Nombres Primero -->
+        <div class="hero-right-team">
+            <h3>Ingeniería de Redes / Creadores</h3>
+            <div class="team-list-innovative">
+                <div class="team-row-item">
+                    <span class="name">Liliana Averos</span>
+                    <span class="role">Ingeniería TIC</span>
+                </div>
+                <div class="team-row-item">
+                    <span class="name">Camila Perrazo</span>
+                    <span class="role">Ingeniería TIC</span>
+                </div>
+                <div class="team-row-item">
+                    <span class="name">Israel Segovia</span>
+                    <span class="role">Ingeniería TIC</span>
+                </div>
+                <div class="team-row-item">
+                    <span class="name">Gonzalo Zavala</span>
+                    <span class="role">Ingeniería TIC</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FLUJO INTERCALADO: ASIMETRÍA IZQUIERDA / DERECHA -->
+    <section class="split-flow-section" id="identidad">
+        
+        <!-- Bloque 1: Misión (Texto Izquierda, Elemento Gráfico Derecha) -->
+        <div class="split-row">
+            <div class="split-content-box">
+                <div class="tagline">Dirección Estratégica</div>
+                <h2>Nuestra Misión</h2>
+                <p>Proveer soluciones tecnológicas confiables, seguras y escalables que impulsen la transformación digital de las organizaciones ecuatorianas, garantizando la continuidad operativa y la protección de sus activos de información mediante equipos altamente capacitados y tecnología de vanguardia.</p>
+            </div>
+            <div class="split-media-box" style="background: linear-gradient(135deg, rgba(99,91,255,0.03) 0%, rgba(0,212,182,0.03) 100%); border-radius: 40px 10px 40px 40px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">🚀</div>
+                <h4 style="font-size: 1.1rem; margin-bottom: 10px; font-weight: 700;">Continuidad sin Fisuras</h4>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">Diseño modular y orquestado enfocado al cumplimiento estricto de los objetivos estratégicos del negocio.</p>
+            </div>
+        </div>
+
+        <!-- Bloque 2: Visión (Invertido: Elemento Izquierda, Texto Derecha) -->
+        <div class="split-row reverse" id="vision">
+            <div class="split-content-box">
+                <div class="tagline">Proyección Nacional</div>
+                <h2>Nuestra Visión</h2>
+                <p>Ser la empresa líder en soluciones de infraestructura TI y telecomunicaciones del Ecuador para el año 2030, reconocida por la excelencia en el servicio, la innovación tecnológica continua y el impacto positivo en la productividad de los clientes a nivel nacional.</p>
+            </div>
+            <div class="split-media-box" style="border-left: 6px solid var(--accent-teal);">
+                <div style="font-size: 3rem; margin-bottom: 15px;">🎯</div>
+                <h4 style="font-size: 1.1rem; margin-bottom: 10px; font-weight: 700;">Horizonte 2030</h4>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">Liderazgo consolidado en ciberseguridad perimetral y transporte unificado de datos multimedia.</p>
+            </div>
+        </div>
+
+        <!-- Bloque 3: Qué Ofrece (Texto Izquierda, Lista Dinámica Derecha) -->
+        <div class="split-row" id="soluciones">
+            <div class="split-content-box">
+                <div class="tagline">Capacidades del Core</div>
+                <h2>¿Qué ofrece NetServe Solutions?</h2>
+                <p>Desplegamos un portafolio de arquitectura de red modular alineado con las demandas tecnológicas modernas del sector corporativo.</p>
+            </div>
+            <div class="split-media-box">
+                <ul class="deco-list">
+                    <li><div class="deco-list-bullet"></div> <strong>Redes WAN / LAN:</strong> Conectividad corporativa tolerante a fallos de diseño inteligente.</li>
+                    <li><div class="deco-list-bullet" style="background-color: var(--accent-blue);"></div> <strong>Ciberseguridad Perimetral:</strong> Firewalls de próxima generación, IDS/IPS y VPNs.</li>
+                    <li><div class="deco-list-bullet"></div> <strong>Infraestructura de Servidores:</strong> Centralización de Data Centers y virtualización.</li>
+                    <li><div class="deco-list-bullet" style="background-color: var(--accent-blue);"></div> <strong>Telemetría Completa:</strong> Monitoreo analítico y proactivo de tráfico y SLAs.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Bloque 4: Sedes (Invertido: Despliegue de Nodos Izquierda, Texto Derecha) -->
+        <div class="split-row reverse" id="nodos">
+            <div class="split-content-box">
+                <div class="tagline">Presencia Geográfica</div>
+                <h2>Sedes Operativas y Distribución</h2>
+                <p>Garantizamos cobertura técnica integrada a través de topologías optimizadas según la demanda de tráfico de cada punto.</p>
+            </div>
+            <div class="split-media-box" style="background: transparent; box-shadow: none; padding: 0;">
+                <div class="node-display">
+                    <div class="node-strip" style="border-right: 4px solid var(--accent-blue);">
+                        <h4>Sede Matriz — Quito (Pichincha)</h4>
+                        <p>Av. de los Shyris N34-255 y Suecia, Edificio Torre Azul, Piso 8. Aloja el Data Center centralizado, servidores transaccionales y la plataforma principal NMS.</p>
+                    </div>
+                    <div class="node-strip" style="border-right: 4px solid var(--accent-teal);">
+                        <h4>Sede Sucursal — Cuenca (Azuay)</h4>
+                        <p>Calle Larga 2-57 y Hermano Miguel, Edificio Pacífico, Piso 3. Nodo regional de expansión estructurado bajo el modelo eficiente de núcleo colapsado.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Footer Corporativo e Institucional -->
+    <footer>
+        <div>
+            &copy; 2026 NetServe Solutions S.A. | Todos los derechos reservados.
+        </div>
+        <div>
+            Estructura basada en el reporte técnico de referencia <span style="font-family: monospace; color: var(--accent-blue);">"Grupo4_HDL_NetServer.pdf"</span> para ESPE.
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+!Bloqueo de PING Inter-Sedes (Ventas Sucursal hacia Finanzas Matriz)
+
+enable
+configure terminal
+
+! 1. Creamos la ACL Extendida nombrada
+ip access-list extended RESTRINGIR_PING_VENTAS_FINANZAS
+ remark Bloquear solo protocolo ICMP (echo) desde Ventas hacia Finanzas
+
+ ! 2. Regla especifica (Denegar Protocolo a nivel Capa 4/3)
+ deny icmp 172.16.0.0 0.0.0.63 10.10.2.32 0.0.0.15 echo
+
+ ! 3. Regla global (Anular Implicit Deny)
+ permit ip any any
+exit
+
+! 4. Aplicación lo más cerca del ORIGEN (SVI 110 de la Sucursal) en dirección IN
+interface vlan 110
+ ip access-group RESTRINGIR_PING_VENTAS_FINANZAS in
+exit
+
+end
+write memory
